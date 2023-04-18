@@ -1,12 +1,11 @@
 package com.example
 
+import com.example.crawler.EnextCrawler
 import com.example.helper.LocalFileHelper
 import com.example.model.CouponCourseData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import com.example.crawler.EnextCrawler
-import com.example.crawler.RealDiscountCrawler
 import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadPoolExecutor
@@ -21,9 +20,14 @@ class MainCrawler {
                 while (true) {
                     startTime = System.currentTimeMillis()
                     val allCouponUrls = mutableSetOf<String>()
+//                    println("Before fetching the URL form e-next")
                     allCouponUrls.addAll(EnextCrawler().getAllCouponUrl())
+                    println("Got the result after fetching with length ${allCouponUrls.size}")
 //                    allCouponUrls.addAll(RealDiscountCrawler(1000).getAllCouponUrl())
                     val allCouponUrlsSet = filterValidCouponUrls(allCouponUrls)
+                    println("Got the result after filtering by set with length ${allCouponUrls.size}")
+                    println("Sample for the first url ${allCouponUrlsSet.toList()[0]}")
+
                     File("udemy_coupon_urls.log").writeText(allCouponUrlsSet.joinToString("\n"))
                     saveAllCouponData(allCouponUrlsSet, numberOfThread = 20)
                     val runTime = System.currentTimeMillis() - startTime
@@ -39,11 +43,13 @@ class MainCrawler {
             val executor: ThreadPoolExecutor = Executors.newFixedThreadPool(numberOfThread) as ThreadPoolExecutor
 
             allCouponUrls.forEach { couponUrl ->
+                println("Trying saving coupon course data $couponUrl")
                 // submit a new thread to the executor
                 executor.submit {
                     val couponCodeData = UdemyCouponCourseExtractor(couponUrl).getFullCouponCodeData()
                     couponCodeData?.let {
                         couponCourseArray.add(it)
+                        print(it)
                     }
                 }
             }

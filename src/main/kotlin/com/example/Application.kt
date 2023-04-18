@@ -1,8 +1,9 @@
 package com.example
 
 import com.example.MainCrawler.Companion.startCrawler
+import com.example.plugins.configureRouting
+import com.example.plugins.configureSerialization
 import io.ktor.server.application.*
-import com.example.plugins.*
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)

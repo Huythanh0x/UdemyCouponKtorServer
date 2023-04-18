@@ -112,7 +112,6 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
             headline,
             description
         )
-        println(resultData)
         return resultData
     }
 
