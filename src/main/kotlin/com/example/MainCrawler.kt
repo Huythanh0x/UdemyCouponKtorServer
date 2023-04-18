@@ -45,12 +45,17 @@ class MainCrawler {
             allCouponUrls.forEach { couponUrl ->
                 println("Trying saving coupon course data $couponUrl")
                 // submit a new thread to the executor
-                executor.submit {
-                    val couponCodeData = UdemyCouponCourseExtractor(couponUrl).getFullCouponCodeData()
-                    couponCodeData?.let {
-                        couponCourseArray.add(it)
-                        print(it)
-                    }
+//                executor.submit {
+//                    val couponCodeData = UdemyCouponCourseExtractor(couponUrl).getFullCouponCodeData()
+//                    couponCodeData?.let {
+//                        couponCourseArray.add(it)
+//                        print(it)
+//                    }
+//                }
+                val couponCodeData = UdemyCouponCourseExtractor(couponUrl).getFullCouponCodeData()
+                couponCodeData?.let {
+                    couponCourseArray.add(it)
+                    print(it)
                 }
             }
             // shutdown the executor once all threads are finished
