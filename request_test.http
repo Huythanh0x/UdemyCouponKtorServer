@@ -1,0 +1,23 @@
+###
+GET http://0.0.0.0:8080/fetch/all
+Accept: application/json
+
+###
+GET http://0.0.0.0:8080/fetch/1000
+Accept: application/json
+
+###
+GET http://0.0.0.0:8080/fetch/20
+Accept: application/json
+
+###
+GET http://0.0.0.0:8080/search/python
+Accept: application/json
+
+###
+GET http://0.0.0.0:8080/search/android
+Accept: application/json
+
+###
+GET http://0.0.0.0:8080/search/javascript
+Accept: application/json
