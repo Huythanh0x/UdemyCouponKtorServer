@@ -76,7 +76,7 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
 
         val title: String = courseObjectJson.getString("title")
         val headline: String = courseObjectJson.getString("headline")
-        val description: String = courseObjectJson.getString("description").trim()
+        val description: String = courseObjectJson.getString("description").trim().replace("\n", "")
         try {
             author = courseObjectJson.getJSONArray("visible_instructors").getJSONObject(0).getString("title")
         } catch (_: Exception) {

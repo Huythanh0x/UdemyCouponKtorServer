@@ -25,7 +25,7 @@ class MainCrawler {
                     allCouponUrls.addAll(RealDiscountCrawler(1000).getAllCouponUrl())
                     val allCouponUrlsSet = filterValidCouponUrls(allCouponUrls)
                     File("udemy_coupon_urls.log").writeText(allCouponUrlsSet.joinToString("\n"))
-                    saveAllCouponData(allCouponUrlsSet, numberOfThread = 40)
+                    saveAllCouponData(allCouponUrlsSet, numberOfThread = 20)
                     val runTime = System.currentTimeMillis() - startTime
                     val delayTime = max(INTERVAL - runTime, 0)
                     println("Wait for $delayTime milliseconds until the next run")
