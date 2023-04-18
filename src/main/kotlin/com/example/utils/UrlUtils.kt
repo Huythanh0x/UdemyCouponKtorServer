@@ -1,4 +1,4 @@
-package org.example.utils
+package com.example.utils
 
 class UrlUtils {
     companion object {

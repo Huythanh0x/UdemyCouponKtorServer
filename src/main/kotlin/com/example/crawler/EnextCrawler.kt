@@ -1,7 +1,7 @@
-package org.example.crawler
+package com.example.crawler
 
-import org.example.base.CouponUrlCrawlerBase
-import org.example.helper.RemoteJsonHelper
+import com.example.base.CouponUrlCrawlerBase
+import com.example.helper.RemoteJsonHelper
 import org.json.JSONArray
 import org.json.JSONObject
 

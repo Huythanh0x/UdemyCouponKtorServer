@@ -1,4 +1,4 @@
-package org.example.helper
+package com.example.helper
 
 import org.json.JSONArray
 import org.json.JSONObject

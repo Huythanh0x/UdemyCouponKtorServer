@@ -1,12 +1,13 @@
-package org.example
+package com.example
 
-import org.example.data.CouponCourseData
-import org.example.data.CouponJsonData
-import org.example.data.CourseJsonData
-import org.example.helper.RequestHtmlHelper
-import org.example.helper.RemoteJsonHelper
-import org.example.utils.UrlUtils
+import com.example.model.CouponCourseData
+import com.example.model.CouponJsonData
+import com.example.model.CourseJsonData
+import com.example.helper.RequestHtmlHelper
+import com.example.helper.RemoteJsonHelper
+import com.example.utils.UrlUtils
 import org.json.JSONObject
+
 
 class UdemyCouponCourseExtractor(private val couponUrl: String) {
     private var courseId = 0
@@ -71,7 +72,7 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
     private fun extractCourseDataFromOfficialAPI(courseObjectJson: JSONObject): CourseJsonData {
         var author = "Unknown"
         var category = "Unknown"
-        var subCategory = "None"
+        var subCategory = "Unknown"
 
         val title: String = courseObjectJson.getString("title")
         val headline: String = courseObjectJson.getString("headline")

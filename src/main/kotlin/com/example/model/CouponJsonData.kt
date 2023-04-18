@@ -1,4 +1,4 @@
-package org.example.data
+package com.example.model
 
 data class CouponJsonData(
     val price: Float?,
