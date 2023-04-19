@@ -12,7 +12,9 @@ import kotlin.math.min
 class LocalFileHelper {
     companion object {
         fun dumpJsonToFile(
-            couponCourseArray: MutableSet<CouponCourseData>, jsonFilePath: String = "udemy_coupon.json"
+            couponCourseArray: MutableSet<CouponCourseData>,
+            currentIpAddress: String,
+            jsonFilePath: String = "udemy_coupon.json"
         ) {
             val jsonArray = JSONArray()
             for (coupon in couponCourseArray) {
@@ -21,6 +23,7 @@ class LocalFileHelper {
             val resultJson = JSONObject()
             resultJson.put("coupons", jsonArray)
             resultJson.put("localTime", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+            resultJson.put("crawlIPAddress", currentIpAddress)
             FileWriter(jsonFilePath).use { it.write(resultJson.toString()) }
         }
 

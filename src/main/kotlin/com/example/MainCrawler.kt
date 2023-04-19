@@ -1,8 +1,8 @@
 package com.example
 
-import com.example.crawler.EnextCrawler
 import com.example.crawler.RealDiscountCrawler
 import com.example.helper.LocalFileHelper
+import com.example.helper.RemoteJsonHelper
 import com.example.model.CouponCourseData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -21,8 +21,8 @@ class MainCrawler {
                 while (true) {
                     startTime = System.currentTimeMillis()
                     val allCouponUrls = mutableSetOf<String>()
-                    allCouponUrls.addAll(EnextCrawler().getAllCouponUrl())
-                    allCouponUrls.addAll(RealDiscountCrawler(1000).getAllCouponUrl())
+//                    allCouponUrls.addAll(EnextCrawler().getAllCouponUrl())
+                    allCouponUrls.addAll(RealDiscountCrawler(20).getAllCouponUrl())
                     val allCouponUrlsSet = filterValidCouponUrls(allCouponUrls)
                     File("udemy_coupon_urls.log").writeText(allCouponUrlsSet.joinToString("\n"))
                     saveAllCouponData(allCouponUrlsSet, numberOfThread = 20)
@@ -52,7 +52,8 @@ class MainCrawler {
             while (!executor.isTerminated) {
                 // wait until all threads are finished
             }
-            LocalFileHelper.dumpJsonToFile(couponCourseArray)
+            val currentIpAddress = RemoteJsonHelper.getJsonObjectFrom("https://ipinfo.io/").getString("ip")
+            LocalFileHelper.dumpJsonToFile(couponCourseArray, currentIpAddress)
             LocalFileHelper.storeDataAsCsv(couponCourseArray)
             println("All threads finished")
         }
