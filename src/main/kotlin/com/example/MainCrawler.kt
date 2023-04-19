@@ -1,12 +1,12 @@
 package com.example
 
+import com.example.crawler.EnextCrawler
+import com.example.crawler.RealDiscountCrawler
 import com.example.helper.LocalFileHelper
 import com.example.model.CouponCourseData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import com.example.crawler.EnextCrawler
-import com.example.crawler.RealDiscountCrawler
 import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadPoolExecutor
@@ -22,7 +22,7 @@ class MainCrawler {
                     startTime = System.currentTimeMillis()
                     val allCouponUrls = mutableSetOf<String>()
                     allCouponUrls.addAll(EnextCrawler().getAllCouponUrl())
-//                    allCouponUrls.addAll(RealDiscountCrawler(1000).getAllCouponUrl())
+                    allCouponUrls.addAll(RealDiscountCrawler(1000).getAllCouponUrl())
                     val allCouponUrlsSet = filterValidCouponUrls(allCouponUrls)
                     File("udemy_coupon_urls.log").writeText(allCouponUrlsSet.joinToString("\n"))
                     saveAllCouponData(allCouponUrlsSet, numberOfThread = 20)

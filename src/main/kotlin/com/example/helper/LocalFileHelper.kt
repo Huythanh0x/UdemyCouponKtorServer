@@ -34,37 +34,48 @@ class LocalFileHelper {
         }
 
         fun getAllCouponCourseJson(): String {
-            return File("udemy_coupon.json").readText()
+            if (File("udemy_coupon.json").exists()) {
+                return File("udemy_coupon.json").readText()
+            } else {
+                return "There is no data to fetch"
+            }
         }
 
         fun getCouponCourseJson(numberOfCourseRequest: Int): String {
-            val couponsJson = File("udemy_coupon.json").readText()
-            val responseJsonObject = JSONObject(couponsJson)
-            val responseJsonArray = responseJsonObject.getJSONArray("coupons")
-            val numberOfCourseResponse = min(numberOfCourseRequest, responseJsonArray.length())
+            if (File("udemy_coupon.json").exists()) {
+                val couponsJson = File("udemy_coupon.json").readText()
+                val responseJsonObject = JSONObject(couponsJson)
+                val responseJsonArray = responseJsonObject.getJSONArray("coupons")
+                val numberOfCourseResponse = min(numberOfCourseRequest, responseJsonArray.length())
 
-            val slicedArray = responseJsonArray.toList().subList(0, numberOfCourseResponse).let { JSONArray(it) }
-            val responseJson = JSONObject()
-            responseJson.apply {
-                put("coupons", slicedArray)
-                put("localTime", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                val slicedArray = responseJsonArray.toList().subList(0, numberOfCourseResponse).let { JSONArray(it) }
+                val responseJson = JSONObject()
+                responseJson.apply {
+                    put("coupons", slicedArray)
+                    put("localTime", responseJsonObject.getString("localTime"))
+                }
+                return responseJson.toString()
             }
-            return responseJson.toString()
+            return "There is no data to fetch"
         }
 
         fun queryCouponCourseJson(searchQuery: String): String {
-            val couponsJson = File("udemy_coupon.json").readText()
-            val responseJsonObject = JSONObject(couponsJson)
-            val responseJsonArray = responseJsonObject.getJSONArray("coupons")
-            val slicedArray =
-                responseJsonArray.toList().filter { it.toString().lowercase().contains(searchQuery.lowercase()) }
-                    .let { JSONArray(it) }
-            val responseJson = JSONObject()
-            responseJson.apply {
-                put("coupons", slicedArray)
-                put("localTime", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+            if (File("udemy_coupon.json").exists()) {
+                val couponsJson = File("udemy_coupon.json").readText()
+                val responseJsonObject = JSONObject(couponsJson)
+                val responseJsonArray = responseJsonObject.getJSONArray("coupons")
+                val slicedArray =
+                    responseJsonArray.toList().filter { it.toString().lowercase().contains(searchQuery.lowercase()) }
+                        .let { JSONArray(it) }
+                val responseJson = JSONObject()
+                responseJson.apply {
+                    put("coupons", slicedArray)
+                    put("localTime", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                }
+                return responseJson.toString()
+            } else {
+                return "There is no data to fetch"
             }
-            return responseJson.toString()
         }
     }
 }
