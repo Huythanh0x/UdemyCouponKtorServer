@@ -51,4 +51,7 @@ data class CouponCourseData(
                 "$students|||$couponCode|||$previewImage|||$couponUrl|||$expiredDate|||$usesRemaining|||$heading|||" +
                 "$description|||$previewVideo|||$language\n"
     }
+    override fun toString(): String {
+        return title
+    }
 }

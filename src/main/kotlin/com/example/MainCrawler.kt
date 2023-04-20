@@ -1,5 +1,6 @@
 package com.example
 
+import com.example.crawler.EnextCrawler
 import com.example.crawler.RealDiscountCrawler
 import com.example.helper.LocalFileHelper
 import com.example.helper.RemoteJsonHelper
@@ -21,8 +22,8 @@ class MainCrawler {
                 while (true) {
                     startTime = System.currentTimeMillis()
                     val allCouponUrls = mutableSetOf<String>()
-//                    allCouponUrls.addAll(EnextCrawler().getAllCouponUrl())
-                    allCouponUrls.addAll(RealDiscountCrawler(20).getAllCouponUrl())
+                    allCouponUrls.addAll(EnextCrawler().getAllCouponUrl())
+                    allCouponUrls.addAll(RealDiscountCrawler(1000).getAllCouponUrl())
                     val allCouponUrlsSet = filterValidCouponUrls(allCouponUrls)
                     File("udemy_coupon_urls.log").writeText(allCouponUrlsSet.joinToString("\n"))
                     saveAllCouponData(allCouponUrlsSet, numberOfThread = 20)
@@ -41,9 +42,14 @@ class MainCrawler {
             allCouponUrls.forEach { couponUrl ->
                 // submit a new thread to the executor
                 executor.submit {
-                    val couponCodeData = UdemyCouponCourseExtractor(couponUrl).getFullCouponCodeData()
-                    couponCodeData?.let {
-                        couponCourseArray.add(it)
+                    try {
+                        val couponCodeData = UdemyCouponCourseExtractor(couponUrl).getFullCouponCodeData()
+                        couponCodeData?.let {
+                            couponCourseArray.add(it)
+                            println(it.title)
+                        }
+                    } catch (e: Exception) {
+                        println(e.toString())
                     }
                 }
             }
@@ -53,7 +59,9 @@ class MainCrawler {
                 // wait until all threads are finished
             }
             val currentIpAddress = RemoteJsonHelper.getJsonObjectFrom("https://ipinfo.io/").getString("ip")
+            println("current IP address $currentIpAddress")
             LocalFileHelper.dumpJsonToFile(couponCourseArray, currentIpAddress)
+            LocalFileHelper.storeDataAsCsv(couponCourseArray)
             LocalFileHelper.storeDataAsCsv(couponCourseArray)
             println("All threads finished")
         }

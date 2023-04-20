@@ -23,7 +23,7 @@ class LocalFileHelper {
             val resultJson = JSONObject()
             resultJson.put("coupons", jsonArray)
             resultJson.put("localTime", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-            resultJson.put("crawlIPAddress", currentIpAddress)
+            resultJson.put("ipAddress", currentIpAddress)
             FileWriter(jsonFilePath).use { it.write(resultJson.toString()) }
         }
 
@@ -56,6 +56,7 @@ class LocalFileHelper {
                 responseJson.apply {
                     put("coupons", slicedArray)
                     put("localTime", responseJsonObject.getString("localTime"))
+                    put("ipAddress", responseJsonObject.getString("ipAddress"))
                 }
                 return responseJson.toString()
             }
@@ -74,6 +75,7 @@ class LocalFileHelper {
                 responseJson.apply {
                     put("coupons", slicedArray)
                     put("localTime", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                    put("ipAddress", responseJsonObject.getString("ipAddress"))
                 }
                 return responseJson.toString()
             } else {

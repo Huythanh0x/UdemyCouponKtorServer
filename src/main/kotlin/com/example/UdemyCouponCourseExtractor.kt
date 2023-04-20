@@ -98,7 +98,7 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
         val contentLength: Int = courseObjectJson.getInt("estimated_content_length")
 
 
-        val resultData = CourseJsonData(
+        return CourseJsonData(
             category,
             subCategory,
             title,
@@ -112,8 +112,6 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
             headline,
             description
         )
-        println(resultData)
-        return resultData
     }
 
     private fun extractDataCouponFromOfficialAPI(couponJsonObject: JSONObject): CouponJsonData {
