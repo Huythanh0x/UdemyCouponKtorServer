@@ -1,8 +1,8 @@
 package com.example.plugins
 
-import com.example.helper.LocalFileHelper.Companion.getAllCouponCourseJson
-import com.example.helper.LocalFileHelper.Companion.getCouponCourseJson
-import com.example.helper.LocalFileHelper.Companion.queryCouponCourseJson
+import com.example.controller.helper.LocalFileHelper.Companion.getAllCouponCourseJson
+import com.example.controller.helper.LocalFileHelper.Companion.getCouponCourseJson
+import com.example.controller.helper.LocalFileHelper.Companion.queryCouponCourseJson
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*

@@ -1,4 +1,4 @@
-package com.example.base
+package com.example.controller.base
 
 abstract class CouponUrlCrawlerBase {
     abstract val baseAPIUrl: String

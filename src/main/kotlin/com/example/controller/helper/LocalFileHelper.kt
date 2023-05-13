@@ -1,6 +1,6 @@
-package com.example.helper
+package com.example.controller.helper
 
-import com.example.model.CouponCourseData
+import com.example.data.model.CouponCourseData
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File

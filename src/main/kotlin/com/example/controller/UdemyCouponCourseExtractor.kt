@@ -1,10 +1,10 @@
-package com.example
+package com.example.controller
 
-import com.example.model.CouponCourseData
-import com.example.model.CouponJsonData
-import com.example.model.CourseJsonData
-import com.example.helper.RequestHtmlHelper
-import com.example.helper.RemoteJsonHelper
+import com.example.data.model.CouponCourseData
+import com.example.data.model.CouponJsonData
+import com.example.data.model.CourseJsonData
+import com.example.controller.helper.RequestHtmlHelper
+import com.example.controller.helper.RemoteJsonHelper
 import com.example.utils.UrlUtils
 import org.json.JSONObject
 
@@ -91,7 +91,7 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
         } catch (_: Exception) {
         }
         val language: String = courseObjectJson.getJSONObject("locale").getString("simple_english_title")
-        val level: String = courseObjectJson.getString("instructional_level")
+        val level: String = courseObjectJson.getString("instructional_level").replace(" Level", "")
         val students: Int = courseObjectJson.getInt("num_subscribers")
         val rating: Float = courseObjectJson.getFloat("avg_rating_recent")
         val numberReviews: Int = courseObjectJson.getInt("num_reviews")

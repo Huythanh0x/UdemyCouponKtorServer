@@ -1,6 +1,6 @@
 package com.example
 
-import com.example.MainCrawler.Companion.startCrawler
+import com.example.controller.MainCrawler.Companion.startCrawler
 import io.ktor.server.application.*
 import com.example.plugins.*
 

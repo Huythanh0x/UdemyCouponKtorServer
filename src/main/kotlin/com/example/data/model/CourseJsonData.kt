@@ -1,4 +1,4 @@
-package com.example.model
+package com.example.data.model
 
 data class CourseJsonData(
     val category: String,
