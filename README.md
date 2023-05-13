@@ -1,9 +1,14 @@
 Ktor server for Udemy coupons
 ============
 
-The project is a Ktor server that crawls data from various websites and validates coupons by sending data to the
+The project is a Ktor server that crawls coupons from various websites and validates coupons by sending data to the
 official Udemy API. It provides several API endpoints, including fetching all or a specified number of data, searching
 for coupons by keyword, and more. The project also includes a Docker Hub link for easy build and deployment.
+
+### List websites
+
+- <https://jobs.e-next.in/course/udemy>
+- <https://www.real.discount/>
 
 ### Technologies Used
 
@@ -31,7 +36,7 @@ You can also check the live server [http://huythanh0x.ddns.net](http://huythanh0
 
 ### API Endpoints
 
-### Sample response
+#### Sample response
 
 <details>
     <summary> Click to show hidden info</summary>
