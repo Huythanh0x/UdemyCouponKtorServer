@@ -91,7 +91,10 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
         } catch (_: Exception) {
         }
         val language: String = courseObjectJson.getJSONObject("locale").getString("simple_english_title")
-        val level: String = courseObjectJson.getString("instructional_level").replace(" Level", "")
+        val level: String = if (courseObjectJson.getString("instructional_level")
+                .contains("Levels")
+        ) courseObjectJson.getString("instructional_level") else courseObjectJson.getString("instructional_level")
+            .replace(" Level", "")
         val students: Int = courseObjectJson.getInt("num_subscribers")
         val rating: Float = courseObjectJson.getFloat("avg_rating_recent")
         val numberReviews: Int = courseObjectJson.getInt("num_reviews")

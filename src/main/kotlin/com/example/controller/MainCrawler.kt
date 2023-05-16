@@ -1,7 +1,7 @@
 package com.example.controller
 
-import com.example.controller.base.crawler.EnextCrawler
-import com.example.controller.base.crawler.RealDiscountCrawler
+import com.example.controller.crawler.EnextCrawler
+import com.example.controller.crawler.RealDiscountCrawler
 import com.example.controller.helper.LocalFileHelper
 import com.example.controller.helper.RemoteJsonHelper
 import com.example.data.model.CouponCourseData
@@ -62,7 +62,9 @@ class MainCrawler {
             println("current IP address $currentIpAddress")
             LocalFileHelper.dumpJsonToFile(couponCourseArray, currentIpAddress)
             LocalFileHelper.storeDataAsCsv(couponCourseArray)
-            LocalFileHelper.storeDataAsCsv(couponCourseArray)
+//            LocalFileHelper.storeDataAsCsv(couponCourseArray)
+//            val couponDao = CouponDAO(DatabaseProvider())
+//            couponDao.insertCouponCourses(couponCourseArray.toList())
             println("All threads finished")
         }
 

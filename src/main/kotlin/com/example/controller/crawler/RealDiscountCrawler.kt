@@ -1,4 +1,4 @@
-package com.example.controller.base.crawler
+package com.example.controller.crawler
 
 import com.example.controller.base.CouponUrlCrawlerBase
 import com.example.controller.helper.RemoteJsonHelper
