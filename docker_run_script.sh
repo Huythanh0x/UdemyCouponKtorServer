@@ -1,4 +1,6 @@
-sudo docker build -t huythanh0x/udemy_coupon_ktor_server:v1 .
-sudo docker run -p 8080:8080 --cap-add=NET_ADMIN --device=/dev/net/tun huythanh0x/udemy_coupon_ktor_server:v1
+sudo docker build -t huythanh0x/udemy_coupon_ktor_server:latest .
 
-#sudo docker push huythanh0x/udemy_coupon_ktor_server:v1
+sudo docker run --name ktor-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -d  mysql:latest
+sudo docker run -p 8080:8080 huythanh0x/udemy_coupon_ktor_server:latest
+
+#sudo docker push huythanh0x/udemy_coupon_ktor_server:latest

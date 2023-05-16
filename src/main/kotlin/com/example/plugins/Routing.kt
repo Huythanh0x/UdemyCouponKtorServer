@@ -1,8 +1,8 @@
 package com.example.plugins
 
-import com.example.controller.helper.LocalFileHelper.Companion.getAllCouponCourseJson
-import com.example.controller.helper.LocalFileHelper.Companion.getCouponCourseJson
-import com.example.controller.helper.LocalFileHelper.Companion.queryCouponCourseJson
+import com.example.controller.helper.LocalFileHelper.Companion.getAllCouponCoursesJson
+import com.example.controller.helper.LocalFileHelper.Companion.getNCouponCoursesJson
+import com.example.controller.helper.LocalFileHelper.Companion.queryCouponCoursesJson
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -14,7 +14,7 @@ fun Application.configureRouting() {
             call.respondText("Welcome to the home page", status = HttpStatusCode.OK)
         }
         get("/fetch/all") {
-            call.respondText(getAllCouponCourseJson(), ContentType.Application.Json, status = HttpStatusCode.OK)
+            call.respondText(getAllCouponCoursesJson(), ContentType.Application.Json, status = HttpStatusCode.OK)
         }
         get("/fetch/{numberOfCourseRequest?}") {
             val numberOfCourseRequest = call.parameters["numberOfCourseRequest"]?.toIntOrNull()
@@ -22,7 +22,7 @@ fun Application.configureRouting() {
                 return@get call.respondText("Bad request", status = HttpStatusCode.BadRequest)
             }
             call.respondText(
-                getCouponCourseJson(numberOfCourseRequest), ContentType.Application.Json, status = HttpStatusCode.OK
+                getNCouponCoursesJson(numberOfCourseRequest), ContentType.Application.Json, status = HttpStatusCode.OK
             )
         }
         get("/search/{query?}") {
@@ -31,7 +31,7 @@ fun Application.configureRouting() {
                 return@get call.respondText("Bad request", status = HttpStatusCode.BadRequest)
             }
             call.respondText(
-                queryCouponCourseJson(searchQuery), ContentType.Application.Json, status = HttpStatusCode.OK
+                queryCouponCoursesJson(searchQuery), ContentType.Application.Json, status = HttpStatusCode.OK
             )
         }
     }

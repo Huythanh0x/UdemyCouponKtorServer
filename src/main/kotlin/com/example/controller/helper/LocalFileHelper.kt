@@ -1,33 +1,25 @@
 package com.example.controller.helper
 
+import com.example.data.dao.CouponDAO
 import com.example.data.model.CouponCourseData
-import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileWriter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.math.min
 
 class LocalFileHelper {
     companion object {
-        fun dumpJsonToFile(
-            couponCourseArray: MutableSet<CouponCourseData>,
-            currentIpAddress: String,
-            jsonFilePath: String = "udemy_coupon.json"
+        private val couponDAO = CouponDAO
+        fun dumpFetchedTimeJsonToFile(
+            jsonFilePath: String = "fetched_time.json"
         ) {
-            val jsonArray = JSONArray()
-            for (coupon in couponCourseArray) {
-                jsonArray.put(coupon.toJson())
-            }
             val resultJson = JSONObject()
-            resultJson.put("coupons", jsonArray)
             resultJson.put("localTime", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-            resultJson.put("ipAddress", currentIpAddress)
             FileWriter(jsonFilePath).use { it.write(resultJson.toString()) }
         }
 
-        fun storeDataAsCsv(couponCourseArray: MutableSet<CouponCourseData>, csvFilePath: String = "udemy_coupon.csv") {
+        fun storeDataAsCsv(couponCourseArray: MutableSet<CouponCourseData>, csvFilePath: String = "udemy_coupon_courses.csv") {
             val writer = FileWriter(File(csvFilePath))
             couponCourseArray.forEach { couponCourseData ->
                 writer.append(couponCourseData.toCSVString())
@@ -36,51 +28,39 @@ class LocalFileHelper {
             writer.close()
         }
 
-        fun getAllCouponCourseJson(): String {
-            if (File("udemy_coupon.json").exists()) {
-                return File("udemy_coupon.json").readText()
-            } else {
-                return "There is no data to fetch"
-            }
-        }
-
-        fun getCouponCourseJson(numberOfCourseRequest: Int): String {
-            if (File("udemy_coupon.json").exists()) {
-                val couponsJson = File("udemy_coupon.json").readText()
-                val responseJsonObject = JSONObject(couponsJson)
-                val responseJsonArray = responseJsonObject.getJSONArray("coupons")
-                val numberOfCourseResponse = min(numberOfCourseRequest, responseJsonArray.length())
-
-                val slicedArray = responseJsonArray.toList().subList(0, numberOfCourseResponse).let { JSONArray(it) }
-                val responseJson = JSONObject()
-                responseJson.apply {
-                    put("coupons", slicedArray)
-                    put("localTime", responseJsonObject.getString("localTime"))
-                    put("ipAddress", responseJsonObject.getString("ipAddress"))
-                }
-                return responseJson.toString()
+        fun getAllCouponCoursesJson(): String {
+            if (File("fetched_time.json").exists()) {
+                val coupons = couponDAO.getAllCouponCourses()
+                return createResponseJson(coupons).toString()
             }
             return "There is no data to fetch"
         }
 
-        fun queryCouponCourseJson(searchQuery: String): String {
-            if (File("udemy_coupon.json").exists()) {
-                val couponsJson = File("udemy_coupon.json").readText()
-                val responseJsonObject = JSONObject(couponsJson)
-                val responseJsonArray = responseJsonObject.getJSONArray("coupons")
-                val slicedArray =
-                    responseJsonArray.toList().filter { it.toString().lowercase().contains(searchQuery.lowercase()) }
-                        .let { JSONArray(it) }
-                val responseJson = JSONObject()
-                responseJson.apply {
-                    put("coupons", slicedArray)
-                    put("localTime", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-                    put("ipAddress", responseJsonObject.getString("ipAddress"))
-                }
-                return responseJson.toString()
-            } else {
-                return "There is no data to fetch"
+        fun getNCouponCoursesJson(numberOfCourseRequest: Int): String {
+            if (File("fetched_time.json").exists()) {
+                val coupons = couponDAO.getNCouponCourses(numberOfCourseRequest)
+                return createResponseJson(coupons).toString()
             }
+            return "There is no data to fetch"
+        }
+
+        fun queryCouponCoursesJson(searchQuery: String): String {
+            if (File("fetched_time.json").exists()) {
+                val coupons = couponDAO.searchCouponsByKeyword(searchQuery)
+                return createResponseJson(coupons).toString()
+            }
+            return "There is no data to fetch"
+        }
+
+        private fun createResponseJson(coupons: List<CouponCourseData>): JSONObject {
+            val couponsJson = File("fetched_time.json").readText()
+            val responseJsonObject = JSONObject(couponsJson)
+            val responseJson = JSONObject()
+            responseJson.apply {
+                put("coupons", coupons)
+                put("localTime", responseJsonObject.getString("localTime"))
+            }
+            return responseJson
         }
     }
 }

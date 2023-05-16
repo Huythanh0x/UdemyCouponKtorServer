@@ -32,8 +32,5 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.json:json:20220320")
     implementation("org.jsoup:jsoup:1.15.4")
-    implementation("org.jetbrains.exposed:exposed-core:0.32.1")
-    implementation("org.jetbrains.exposed:exposed-dao:0.32.1")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.32.1")
-    implementation("org.xerial:sqlite-jdbc:3.36.0.3")
+    implementation("mysql:mysql-connector-java:8.0.28")
 }
