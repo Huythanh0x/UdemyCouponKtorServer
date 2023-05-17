@@ -63,7 +63,7 @@ class MainCrawler {
             LocalFileHelper.storeDataAsCsv(couponCourseArray)
             CouponDAO.deleteAllCouponCourses()
             CouponDAO.insertCouponCourses(couponCourseArray.toList())
-            File("udemy_courses.log").writeText(couponCourseArray.toList().joinToString("\n"))
+            File("udemy_courses.log").writeText(couponCourseArray.map { it.couponUrl }.toList().joinToString("\n"))
             File("udemy_errors.log").writeText(listFailToValidate.toList().joinToString("\n"))
         }
 

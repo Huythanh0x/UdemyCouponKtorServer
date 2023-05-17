@@ -8,21 +8,25 @@ import java.io.InputStreamReader
 class RequestHtmlHelper {
     companion object {
         fun getHtmlDocument(couponUrl: String): Document {
-            val command = listOf("curl", couponUrl)
+            val command =
+                """curl -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36" $couponUrl
+            """.trimIndent()
+            return Jsoup.parse(executeCurlCommand(command))
+        }
 
-            val processBuilder = ProcessBuilder(command)
-            val process = processBuilder.start()
+        private fun executeCurlCommand(curlCommand: String): String {
+            val process = Runtime.getRuntime().exec(curlCommand)
+            val reader = BufferedReader(InputStreamReader(process.inputStream))
+            val output = StringBuilder()
 
-            val inputStream = process.inputStream
-            val reader = BufferedReader(InputStreamReader(inputStream))
-
-            var allContent = ""
             var line: String?
             while (reader.readLine().also { line = it } != null) {
-                allContent += line
+                output.append(line)
             }
+
             process.waitFor()
-            return Jsoup.parse(allContent)
+
+            return output.toString()
         }
     }
 }
