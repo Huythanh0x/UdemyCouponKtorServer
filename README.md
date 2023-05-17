@@ -12,25 +12,29 @@ for coupons by keyword, and more. The project also includes a Docker Hub link fo
 
 ### Technologies Used
 
-- [x] Kotlin
-- [x] Ktor
-- [x] Jsoup
-- [ ] Database
-- [x] Docker
+- [x] [Kotlin](https://kotlinlang.org/)
+- [x] [Ktor](https://ktor.io/)
+- [x] [Mysql](https://www.mysql.com/)
+- [x] [Docker](https://www.docker.com/)
 
 ### Build from the source
+
+[Checkout this branch if you don't want to work with mysql](https://github.com/Huythanh0x/UdemyCouponKtorServer/tree/store_all_dat_in_json_file)
 
 **Prerequisites:** * Java 11 or higher
 
 1. Clone the project repository using `git clone https://github.com/Huythanh0x/UdemyCouponKtorServer/tree/master`
-2. Run the project using `./gradlew run`
+2. Run mysql from
+   docker `sudo docker run --name ktor-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=password -d  mysql:latest`
+   3.Run the project using `./gradlew run`
 
 Then all the data will be available at <http://0.0.0.0:8080/>
 
 ### Deployment
 
 The project is Dockerized and can be deployed to any platform that supports Docker. You can use the Docker Hub link to
-build and deploy the project easily. Check at [Docker hub](https://hub.docker.com/repository/docker/huythanh0x/udemy_coupon_ktor_server/general)
+build and deploy the project easily. Check
+at [Docker hub](https://hub.docker.com/repository/docker/huythanh0x/udemy_coupon_ktor_server/general)
 
 You can also check the live server [http://huythanh0x.ddns.net](http://huythanh0x.ddns.net:8080)
 
