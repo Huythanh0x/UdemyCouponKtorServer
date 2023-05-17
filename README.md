@@ -19,9 +19,11 @@ for coupons by keyword, and more. The project also includes a Docker Hub link fo
 
 ### Build from the source
 
-[Checkout this branch if you don't want to work with mysql](https://github.com/Huythanh0x/UdemyCouponKtorServer/tree/store_all_dat_in_json_file)
+[Checkout this branch if you don't want to work with mysql and docker](https://github.com/Huythanh0x/UdemyCouponKtorServer/tree/store_all_dat_in_json_file)
 
-**Prerequisites:** * Java 11 or higher
+**Prerequisites:** 
+- *Java 11 or higher*
+- *Docker*
 
 1. Clone the project repository using `git clone https://github.com/Huythanh0x/UdemyCouponKtorServer/tree/master`
 2. Run mysql from
