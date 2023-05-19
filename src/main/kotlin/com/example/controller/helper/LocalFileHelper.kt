@@ -5,8 +5,10 @@ import com.example.data.model.CouponCourseData
 import org.json.JSONObject
 import java.io.File
 import java.io.FileWriter
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 class LocalFileHelper {
     companion object {
@@ -19,7 +21,21 @@ class LocalFileHelper {
             FileWriter(jsonFilePath).use { it.write(resultJson.toString()) }
         }
 
-        fun storeDataAsCsv(couponCourseArray: MutableSet<CouponCourseData>, csvFilePath: String = "udemy_coupon_courses.csv") {
+        fun loadLasFetchedTimeInMilliSecond() {
+            val couponsJson = File("fetched_time.json").readText()
+            val responseJsonObject = JSONObject(couponsJson)
+            try {
+                val sdf = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+                responseJsonObject.getString("localTime")
+            } catch (e: Exception) {
+
+            }
+        }
+
+        fun storeDataAsCsv(
+            couponCourseArray: MutableSet<CouponCourseData>,
+            csvFilePath: String = "udemy_coupon_courses.csv"
+        ) {
             val writer = FileWriter(File(csvFilePath))
             couponCourseArray.forEach { couponCourseData ->
                 writer.append(couponCourseData.toCSVString())

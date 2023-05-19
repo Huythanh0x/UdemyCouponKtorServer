@@ -14,6 +14,7 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
     private var couponCode: String = ""
 
     init {
+//        println(couponUrl)
         courseId = extractCourseId()
         couponCode = extractCouponCode()
     }

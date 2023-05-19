@@ -5,6 +5,7 @@ import com.example.controller.crawler.RealDiscountCrawler
 import com.example.controller.helper.LocalFileHelper
 import com.example.data.dao.CouponDAO
 import com.example.data.model.CouponCourseData
+import com.example.utils.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -15,7 +16,6 @@ import kotlin.math.max
 
 class MainCrawler {
     companion object {
-        private const val INTERVAL = 10 * 60 * 1000
         fun startCrawler() {
             var startTime: Long
             GlobalScope.launch(Dispatchers.IO) {
@@ -23,11 +23,12 @@ class MainCrawler {
                     startTime = System.currentTimeMillis()
                     val allCouponUrls = mutableSetOf<String>()
                     allCouponUrls.addAll(EnextCrawler().getAllCouponUrl())
-                    allCouponUrls.addAll(RealDiscountCrawler(1000).getAllCouponUrl())
+//                    allCouponUrls.addAll(RealDiscountCrawler(1000).getAllCouponUrl())
                     val allCouponUrlsSet = filterValidCouponUrls(allCouponUrls)
+                    println("Coupon URL set: ${allCouponUrlsSet.size}")
                     saveAllCouponData(allCouponUrlsSet, numberOfThread = 20)
                     val runTime = System.currentTimeMillis() - startTime
-                    val delayTime = max(INTERVAL - runTime, 0)
+                    val delayTime = max(Constants.INTERVAL - runTime, 0)
                     println("Wait for $delayTime milliseconds until the next run")
                     kotlinx.coroutines.delay(delayTime)
                 }
