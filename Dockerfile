@@ -5,6 +5,7 @@ COPY . /app
 EXPOSE 8080
 
 WORKDIR /app
-RUN ./gradlew build
+RUN apk update && apk add --no-cache curl
+RUN ./gradlew build --daemon
 
 CMD java -jar /app/build/libs/UdemyCouponKtorServer-all.jar

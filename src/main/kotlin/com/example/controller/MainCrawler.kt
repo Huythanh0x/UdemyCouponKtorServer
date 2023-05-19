@@ -23,7 +23,7 @@ class MainCrawler {
                     startTime = System.currentTimeMillis()
                     val allCouponUrls = mutableSetOf<String>()
                     allCouponUrls.addAll(EnextCrawler().getAllCouponUrl())
-//                    allCouponUrls.addAll(RealDiscountCrawler(1000).getAllCouponUrl())
+                    allCouponUrls.addAll(RealDiscountCrawler(1000).getAllCouponUrl())
                     val allCouponUrlsSet = filterValidCouponUrls(allCouponUrls)
                     println("Coupon URL set: ${allCouponUrlsSet.size}")
                     saveAllCouponData(allCouponUrlsSet, numberOfThread = 20)
