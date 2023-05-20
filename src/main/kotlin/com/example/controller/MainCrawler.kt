@@ -4,8 +4,13 @@ import com.example.controller.crawler.EnextCrawler
 import com.example.controller.crawler.RealDiscountCrawler
 import com.example.controller.helper.LocalFileHelper
 import com.example.data.dao.CouponDAO
+import com.example.data.dao.ExpiredCouponDAO
+import com.example.data.dao.LogFetchCouponDao
 import com.example.data.model.CouponCourseData
+import com.example.data.model.ExpiredCoupon
+import com.example.data.model.LogFetchCoupon
 import com.example.utils.Constants
+import com.example.utils.LogUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -17,40 +22,54 @@ import kotlin.math.max
 class MainCrawler {
     companion object {
         fun startCrawler() {
-            var startTime: Long
+            var startTime = LocalFileHelper.loadLasFetchedTimeInMilliSecond()
             GlobalScope.launch(Dispatchers.IO) {
+                delayUntilTheNextRound(startTime)
                 while (true) {
+                    clearExpiredCoupons()
                     startTime = System.currentTimeMillis()
                     val allCouponUrls = mutableSetOf<String>()
                     allCouponUrls.addAll(EnextCrawler().getAllCouponUrl())
                     allCouponUrls.addAll(RealDiscountCrawler(1000).getAllCouponUrl())
                     val allCouponUrlsSet = filterValidCouponUrls(allCouponUrls)
                     println("Coupon URL set: ${allCouponUrlsSet.size}")
-                    saveAllCouponData(allCouponUrlsSet, numberOfThread = 20)
-                    val runTime = System.currentTimeMillis() - startTime
-                    val delayTime = max(Constants.INTERVAL - runTime, 0)
-                    println("Wait for $delayTime milliseconds until the next run")
-                    kotlinx.coroutines.delay(delayTime)
+                    File("logs/all_coupon_codes.log").writeText(allCouponUrlsSet.toList().joinToString("\n"))
+                    saveAllCouponData(allCouponUrlsSet, numberOfThread = 10)
+                    delayUntilTheNextRound(startTime)
                 }
             }
         }
 
+        private fun clearExpiredCoupons() {
+            ExpiredCouponDAO.deleteExpiredCoupons()
+        }
+
+        private suspend fun delayUntilTheNextRound(startTime: Long) {
+            val runTime = System.currentTimeMillis() - startTime
+            val delayTime = max(Constants.INTERVAL - runTime, 0)
+            println("Wait for $delayTime milliseconds until the next run")
+            kotlinx.coroutines.delay(delayTime)
+        }
+
         private fun saveAllCouponData(allCouponUrls: Set<String>, numberOfThread: Int = 40) {
-            val couponCourseArray = mutableSetOf<CouponCourseData>()
+            val validCoupons = mutableSetOf<CouponCourseData>()
+            val failedToValidateCouponUrls = mutableSetOf<String>()
+            val expiredCouponUrls = mutableSetOf<String>()
             val executor: ThreadPoolExecutor = Executors.newFixedThreadPool(numberOfThread) as ThreadPoolExecutor
-            val listFailToValidate = mutableMapOf<String, String>()
             allCouponUrls.forEach { couponUrl ->
                 // submit a new thread to the executor
                 executor.submit {
                     try {
                         val couponCodeData = UdemyCouponCourseExtractor(couponUrl).getFullCouponCodeData()
-                        couponCodeData?.let {
-                            couponCourseArray.add(it)
-                            println(it.title)
+                        if (couponCodeData != null) {
+                            validCoupons.add(couponCodeData)
+                            println(couponCodeData.title)
+                        } else {
+                            expiredCouponUrls.add(couponUrl)
                         }
                     } catch (e: Exception) {
                         println(e.toString())
-                        listFailToValidate[couponUrl] = e.toString()
+                        failedToValidateCouponUrls.add("$couponUrl $e")
                     }
                 }
             }
@@ -61,16 +80,43 @@ class MainCrawler {
             }
             println("All threads finished")
             LocalFileHelper.dumpFetchedTimeJsonToFile()
-            LocalFileHelper.storeDataAsCsv(couponCourseArray)
+            keepLogsInTextFiles(validCoupons,failedToValidateCouponUrls, expiredCouponUrls)
+            dumpDataToTheDatabase(validCoupons,failedToValidateCouponUrls, expiredCouponUrls)
+        }
+
+        private fun keepLogsInTextFiles(validCoupons: MutableSet<CouponCourseData>, failedToValidateCouponUrls: MutableSet<String>, expiredCoupons: MutableSet<String>){
+            File("logs/udemy_courses.log").writeText(validCoupons.toList().joinToString("\n"))
+            File("logs/udemy_errors.log").writeText(failedToValidateCouponUrls.toList().joinToString("\n"))
+            File("logs/udemy_expired_courses.log").writeText(expiredCoupons.toList().joinToString("\n"))
+        }
+
+        private fun keepLogForInValidUrls(invalidUrls: List<String>) {
+            File("logs/udemy_invalid_urls.log").writeText(invalidUrls.toList().joinToString("\n"))
+        }
+
+        private fun dumpDataToTheDatabase(validCoupons: MutableSet<CouponCourseData>, failedToValidateCouponUrls: MutableSet<String>, expiredCouponUrls: MutableSet<String>){
             CouponDAO.deleteAllCouponCourses()
-            CouponDAO.insertCouponCourses(couponCourseArray.toList())
-            File("udemy_courses.log").writeText(couponCourseArray.toList().joinToString("\n"))
-            File("udemy_errors.log").writeText(listFailToValidate.toList().joinToString("\n"))
+            CouponDAO.insertCouponCourses(validCoupons)
+            ExpiredCouponDAO.insertExpiredCoupons(expiredCouponUrls.map {
+                ExpiredCoupon(it, LogUtils.getCurrentTimestamp())
+            }.toSet())
+            LogFetchCouponDao.insertLogFetchCoupon(
+                LogFetchCoupon(
+                    0,
+                    LogUtils.getCurrentTimestamp(),
+                    validCoupons.size + expiredCouponUrls.size + failedToValidateCouponUrls.size,
+                    validCoupons.size,
+                    expiredCouponUrls.size,
+                    failedToValidateCouponUrls.size,
+                    LogUtils.getCurrentIpAddress()
+                )
+            )
         }
 
-        private fun filterValidCouponUrls(couponUrls: Set<String>): Set<String> {
-            return couponUrls.filter { it.contains("?couponCode=") }.toSet()
-        }
+        private fun filterValidCouponUrls(couponUrls: MutableSet<String>): Set<String> {
+            keepLogForInValidUrls(couponUrls.filter { !it.contains("?couponCode=") })
+            return couponUrls.filter { it.contains("?couponCode=") }.subtract(ExpiredCouponDAO.getAllExpiredCoupons().map { it.couponUrl }.toSet())
 
+        }
     }
 }

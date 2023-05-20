@@ -14,7 +14,7 @@ object CouponDAO {
     private fun createTableIfNotExists() {
         val connection = DatabaseProvider().getConnection()
         val createTableQuery = """
-            CREATE TABLE IF NOT EXISTS ${Constants.tableName} (
+            CREATE TABLE IF NOT EXISTS ${Constants.couponTableName} (
                 courseId INT PRIMARY KEY,
                 category VARCHAR(255),
                 subCategory VARCHAR(255),
@@ -48,22 +48,22 @@ object CouponDAO {
     fun dropTable() {
         val connection = DatabaseProvider().getConnection()
         val statement = connection.createStatement()
-        val sql = "DROP TABLE IF EXISTS ${Constants.tableName}"
+        val sql = "DROP TABLE IF EXISTS ${Constants.couponTableName}"
         try {
             statement.executeUpdate(sql)
             statement.close()
             connection.close()
-            println("Table ${Constants.tableName} dropped successfully")
+            println("Table ${Constants.couponTableName} dropped successfully")
         } catch (e: SQLException) {
             e.printStackTrace()
         }
 
     }
 
-    fun insertCouponCourses(couponCourses: List<CouponCourseData>) {
+    fun insertCouponCourses(couponCourses: Set<CouponCourseData>) {
         val connection = DatabaseProvider().getConnection()
         val insertQuery = """
-            INSERT INTO ${Constants.tableName} (
+            INSERT INTO ${Constants.couponTableName} (
                 courseId, category, subCategory, title, contentLength, level,
                 author, rating, reviews, students, couponCode, previewImage,
                 couponUrl, expiredDate, usesRemaining, heading, description,
@@ -102,10 +102,10 @@ object CouponDAO {
         }
     }
 
-    fun getAllCouponCourses(): List<CouponCourseData> {
+    fun getAllCouponCourses(): Set<CouponCourseData> {
         val connection = DatabaseProvider().getConnection()
-        val couponCourses = mutableListOf<CouponCourseData>()
-        val getAllCouponsQuery = "SELECT * FROM ${Constants.tableName}"
+        val couponCourses = mutableSetOf<CouponCourseData>()
+        val getAllCouponsQuery = "SELECT * FROM ${Constants.couponTableName}"
         try {
             val statement = connection.createStatement()
             val resultSet = statement.executeQuery(getAllCouponsQuery)
@@ -121,10 +121,10 @@ object CouponDAO {
     }
 
 
-    fun getNCouponCourses(numberOfCourseRequest: Int): List<CouponCourseData> {
+    fun getNCouponCourses(numberOfCourseRequest: Int): Set<CouponCourseData> {
         val connection = DatabaseProvider().getConnection()
-        val couponCourses = mutableListOf<CouponCourseData>()
-        val getAllCouponsQuery = "SELECT * FROM ${Constants.tableName} LIMIT $numberOfCourseRequest"
+        val couponCourses = mutableSetOf<CouponCourseData>()
+        val getAllCouponsQuery = "SELECT * FROM ${Constants.couponTableName} LIMIT $numberOfCourseRequest"
         try {
             val statement = connection.createStatement()
             val resultSet = statement.executeQuery(getAllCouponsQuery)
@@ -139,8 +139,8 @@ object CouponDAO {
         return couponCourses
     }
 
-    fun searchCouponsByKeyword(keyword: String): List<CouponCourseData> {
-        val query = "SELECT * FROM ${Constants.tableName} WHERE title LIKE ? OR description LIKE ?"
+    fun searchCouponsByKeyword(keyword: String): Set<CouponCourseData> {
+        val query = "SELECT * FROM ${Constants.couponTableName} WHERE title LIKE ? OR description LIKE ?"
         val wildcardKeyword = "%$keyword%"
         val connection = DatabaseProvider().getConnection()
         val preparedStatement = connection.prepareStatement(query)
@@ -149,7 +149,7 @@ object CouponDAO {
         preparedStatement.setString(2, wildcardKeyword)
 
         val resultSet = preparedStatement.executeQuery()
-        val couponCourses = mutableListOf<CouponCourseData>()
+        val couponCourses = mutableSetOf<CouponCourseData>()
 
         while (resultSet.next()) {
             couponCourses.add(getCouponCourseFromResultQuery(resultSet))
@@ -164,7 +164,7 @@ object CouponDAO {
 
     fun deleteAllCouponCourses() {
         val connection = DatabaseProvider().getConnection()
-        val deleteQuery = "DELETE FROM ${Constants.tableName}"
+        val deleteQuery = "DELETE FROM ${Constants.couponTableName}"
         try {
             val statement = connection.createStatement()
             statement.executeUpdate(deleteQuery)

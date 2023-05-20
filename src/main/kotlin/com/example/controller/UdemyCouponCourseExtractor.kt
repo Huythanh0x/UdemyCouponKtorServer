@@ -20,10 +20,16 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
     }
 
     private fun extractCourseId(): Int {
+        val document = RequestHtmlHelper.getHtmlDocument(couponUrl)
         return try {
-            RequestHtmlHelper.getHtmlDocument(couponUrl).getElementById("udemy")?.attr("data-clp-course-id")!!.toInt()
-        } catch (e: Exception) {
-            throw java.lang.Exception("CAN NOT FIND COURSE ID")
+            document.body().attr("data-clp-course-id").toInt()
+        }catch (e: Exception){
+            val udemyId = document.getElementById("udemy")
+            if (udemyId != null) {
+                udemyId.attr("data-clp-course-id").toInt()
+            } else {
+                throw java.lang.Exception("CAN NOT FIND ELEMENT COURSE ID FROM WEB")
+            }
         }
     }
 
@@ -126,8 +132,12 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
                 .getJSONObject("price").getFloat("amount")
 
         val expiredDate: String =
-            couponJsonObject.getJSONObject("price_text").getJSONObject("data").getJSONObject("pricing_result")
-                .getJSONObject("campaign").getString("end_time")
+            try {
+                couponJsonObject.getJSONObject("price_text").getJSONObject("data").getJSONObject("pricing_result")
+                    .getJSONObject("campaign").getString("end_time")
+            }catch (e: Exception){
+                "2030-05-19 17:24:00+00:00"
+            }
 
         val previewImage: String = couponJsonObject.getJSONObject("sidebar_container").getJSONObject("componentProps")
             .getJSONObject("introductionAsset").getJSONObject("images").getString("image_750x422")

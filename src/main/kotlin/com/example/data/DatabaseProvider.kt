@@ -29,8 +29,6 @@ class DatabaseProvider() {
             val createQuery = "CREATE DATABASE ${Constants.dbName}"
             statement.executeUpdate(createQuery)
             println("Database '${Constants.dbName}' created successfully.")
-        } else {
-            println("Database '${Constants.dbName}' already exists.")
         }
 
         // Close the resources

@@ -15,7 +15,7 @@ class RealDiscountCrawler(private val maxCouponRequest:Int=600) : CouponUrlCrawl
     }
 
     private fun extractCouponUrl(jsonObject: JSONObject): String {
-        return jsonObject.getString("url")
+        return jsonObject.getString("url").replace("http://click.linksynergy.com/fs-bin/click?id=bnwWbXPyqPU&subid=&offerid=323058.1&type=10&tmpid=14537&RD_PARM1=","")
     }
 
     private fun fetchListJsonObjectFromAPI(): JSONArray {
