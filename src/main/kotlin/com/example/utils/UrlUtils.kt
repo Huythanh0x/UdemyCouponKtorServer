@@ -1,5 +1,8 @@
 package com.example.utils
 
+import java.nio.charset.StandardCharsets
+import java.util.Base64
+
 class UrlUtils {
     companion object {
         fun getCouponAPI(courseId: Int, couponCode: String): String {
@@ -9,6 +12,11 @@ class UrlUtils {
         fun getCourseAPI(courseId: Int): String {
             return "https://www.udemy.com/api-2.0/courses/${courseId}/?fields[course]=title,context_info,primary_category,primary_subcategory,avg_rating_recent,visible_instructors,locale,estimated_content_length,num_subscribers,num_reviews,description,headline,instructional_level"
 
+        }
+
+        fun decodeBase64String(encodedBase64String: String): String {
+            val decodedBytes = Base64.getDecoder().decode(encodedBase64String)
+            return String(decodedBytes, StandardCharsets.UTF_8)
         }
     }
 }

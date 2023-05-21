@@ -38,24 +38,24 @@ object CouponDAO {
         """.trimIndent()
 
         try {
-            val statement = connection.createStatement()
-            statement.execute(createTableQuery)
+            connection.createStatement()?.execute(createTableQuery)
         } catch (e: SQLException) {
             e.printStackTrace()
+        } finally {
+            connection.close()
         }
     }
 
     fun dropTable() {
         val connection = DatabaseProvider().getConnection()
-        val statement = connection.createStatement()
-        val sql = "DROP TABLE IF EXISTS ${Constants.couponTableName}"
+        val dropTableQuery = "DROP TABLE IF EXISTS ${Constants.couponTableName}"
         try {
-            statement.executeUpdate(sql)
-            statement.close()
-            connection.close()
+            connection.createStatement()?.executeUpdate(dropTableQuery)
             println("Table ${Constants.couponTableName} dropped successfully")
         } catch (e: SQLException) {
             e.printStackTrace()
+        } finally {
+            connection.close()
         }
 
     }
@@ -97,8 +97,12 @@ object CouponDAO {
                 preparedStatement.addBatch()
             }
             preparedStatement.executeBatch()
+            preparedStatement.close()
+
         } catch (e: SQLException) {
             e.printStackTrace()
+        } finally {
+            connection.close()
         }
     }
 
@@ -112,6 +116,7 @@ object CouponDAO {
             while (resultSet.next()) {
                 couponCourses.add(getCouponCourseFromResultQuery(resultSet))
             }
+            statement.close()
         } catch (e: SQLException) {
             e.printStackTrace()
         } finally {
@@ -131,6 +136,7 @@ object CouponDAO {
             while (resultSet.next()) {
                 couponCourses.add(getCouponCourseFromResultQuery(resultSet))
             }
+            statement.close()
         } catch (e: SQLException) {
             e.printStackTrace()
         } finally {
@@ -161,6 +167,19 @@ object CouponDAO {
         return couponCourses
     }
 
+    fun deleteCouponCourse(couponUrl: String) {
+        val connection = DatabaseProvider().getConnection()
+        val deleteQuery = "DELETE FROM ${Constants.couponTableName} WHERE couponUrl = ?"
+        try {
+            val preparedStatement = connection.prepareStatement(deleteQuery)
+            preparedStatement.setString(1, couponUrl)
+            preparedStatement.executeUpdate()
+            preparedStatement.close()
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+        connection.close()
+    }
 
     fun deleteAllCouponCourses() {
         val connection = DatabaseProvider().getConnection()
@@ -171,6 +190,7 @@ object CouponDAO {
         } catch (e: SQLException) {
             e.printStackTrace()
         }
+        connection.close()
     }
 
     private fun getCouponCourseFromResultQuery(resultSet: ResultSet): CouponCourseData {

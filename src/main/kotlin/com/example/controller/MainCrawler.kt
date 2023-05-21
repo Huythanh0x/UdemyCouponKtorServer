@@ -101,9 +101,7 @@ object MainCrawler {
     ) {
         Repository.couponDao.deleteAllCouponCourses()
         Repository.couponDao.insertCouponCourses(validCoupons)
-        Repository.expiredCouponDao.insertExpiredCoupons(expiredCouponUrls.map {
-            ExpiredCoupon(it, LastFetchTimeManager.getCurrentTimestamp())
-        }.toSet())
+        Repository.expiredCouponDao.insertExpiredCoupons(expiredCouponUrls.toSet())
         Repository.logFetchedCouponDao.insertLogFetchCoupon(
             validCoupons.size + expiredCouponUrls.size + failedToValidateCouponUrls.size,
             validCoupons.size,
