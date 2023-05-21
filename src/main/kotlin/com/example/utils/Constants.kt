@@ -11,6 +11,6 @@ class Constants {
         const val expiredCouponTableName = "expired_udemy_coupon_table"
         const val logRequestCouponTableName = "log_request_coupon_table"
         const val logFetchCouponTableName = "log_fetch_coupon_table"
-        const val INTERVAL = 15 * 60 * 1000
+        const val INTERVAL = 0
     }
 }

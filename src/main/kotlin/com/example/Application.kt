@@ -1,6 +1,6 @@
 package com.example
 
-import com.example.controller.MainCrawler.Companion.startCrawler
+import com.example.controller.MainCrawler
 import io.ktor.server.application.*
 import com.example.plugins.*
 
@@ -9,7 +9,7 @@ fun main(args: Array<String>): Unit =
 
 @Suppress("unused") // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
 fun Application.module() {
-    startCrawler()
+    MainCrawler.startCrawler()
     configureSerialization()
     configureRouting()
 }

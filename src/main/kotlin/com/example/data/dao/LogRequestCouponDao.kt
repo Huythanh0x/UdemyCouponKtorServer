@@ -49,7 +49,7 @@ object LogRequestCouponDao {
         }
     }
 
-    fun insertLogRequestCoupon(logRequest: LogRequestCoupon) {
+    fun insertLogRequestCoupon(ipAddress: String, entryPoint: String, statusCode: Int, message: String) {
         val connection = DatabaseProvider().getConnection()
         val insertQuery = """
         INSERT INTO ${Constants.logRequestCouponTableName} (
@@ -59,10 +59,10 @@ object LogRequestCouponDao {
 
         try {
             val preparedStatement = connection.prepareStatement(insertQuery)
-            preparedStatement.setString(1, logRequest.ipAddress)
-            preparedStatement.setString(2, logRequest.entryPoint)
-            preparedStatement.setInt(3, logRequest.statusCode)
-            preparedStatement.setString(4, logRequest.message)
+            preparedStatement.setString(1, ipAddress)
+            preparedStatement.setString(2, entryPoint)
+            preparedStatement.setInt(3, statusCode)
+            preparedStatement.setString(4, message)
 
             preparedStatement.executeUpdate()
         } catch (e: SQLException) {

@@ -5,11 +5,6 @@ import java.sql.Timestamp
 import java.util.*
 
 object LogUtils {
-    fun getCurrentTimestamp(): Timestamp {
-        val currentTime = Date()
-        return Timestamp(currentTime.time)
-    }
-
     fun getCurrentIpAddress(): String {
         var ipAddress: String? = null
         try {

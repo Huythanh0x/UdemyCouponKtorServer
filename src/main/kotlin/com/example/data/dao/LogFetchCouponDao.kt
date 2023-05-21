@@ -1,4 +1,5 @@
 package com.example.data.dao
+
 import com.example.data.DatabaseProvider
 import com.example.data.model.LogFetchCoupon
 import com.example.utils.Constants
@@ -11,6 +12,7 @@ object LogFetchCouponDao {
     init {
         createTableIfNotExist()
     }
+
     private fun createTableIfNotExist() {
         val connection = DatabaseProvider().getConnection()
         val createTableQuery = """
@@ -34,6 +36,7 @@ object LogFetchCouponDao {
             connection.close()
         }
     }
+
     fun dropTable() {
         val connection = DatabaseProvider().getConnection()
         val statement = connection.createStatement()
@@ -48,30 +51,23 @@ object LogFetchCouponDao {
         }
     }
 
-    fun insertLogFetchCoupon(logFetchCoupon: LogFetchCoupon) {
+    fun insertLogFetchCoupon(total: Int, valid: Int, expired: Int, error: Int, currentIpAddress: String) {
         val connection = DatabaseProvider().getConnection()
         val insertQuery = """
             INSERT INTO ${Constants.logFetchCouponTableName} (
-                time, total, valid, expired, error, currentIpAddress
-            ) VALUES (?, ?, ?, ?, ?, ?)
+                total, valid, expired, error, currentIpAddress
+            ) VALUES (?, ?, ?, ?, ?)
         """.trimIndent()
 
         try {
             val preparedStatement = connection.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS)
-            preparedStatement.setTimestamp(1, logFetchCoupon.time)
-            preparedStatement.setInt(2, logFetchCoupon.total)
-            preparedStatement.setInt(3, logFetchCoupon.valid)
-            preparedStatement.setInt(4, logFetchCoupon.expired)
-            preparedStatement.setInt(5, logFetchCoupon.error)
-            preparedStatement.setString(6, logFetchCoupon.currentIpAddress)
+            preparedStatement.setInt(1, total)
+            preparedStatement.setInt(2, valid)
+            preparedStatement.setInt(3, expired)
+            preparedStatement.setInt(4, error)
+            preparedStatement.setString(5, currentIpAddress)
 
             preparedStatement.executeUpdate()
-
-            val generatedKeys: ResultSet = preparedStatement.generatedKeys
-            if (generatedKeys.next()) {
-                val generatedId = generatedKeys.getInt(1)
-                logFetchCoupon.id = generatedId
-            }
         } catch (e: SQLException) {
             e.printStackTrace()
         } finally {

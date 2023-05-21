@@ -1,11 +1,6 @@
 package com.example.plugins
 
-import com.example.controller.helper.LocalFileHelper.Companion.getAllCouponCoursesJson
-import com.example.controller.helper.LocalFileHelper.Companion.getNCouponCoursesJson
-import com.example.controller.helper.LocalFileHelper.Companion.queryCouponCoursesJson
-import com.example.data.dao.LogRequestCouponDao
-import com.example.data.model.LogRequestCoupon
-import com.example.utils.LogUtils
+import com.example.data.Repository
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
@@ -19,74 +14,58 @@ fun Application.configureRouting() {
             call.respondText("Welcome to the home page", status = HttpStatusCode.OK)
         }
         get("/fetch/all") {
-            LogRequestCouponDao.insertLogRequestCoupon(
-                LogRequestCoupon(
-                    0,
-                    call.request.origin.remoteHost,
-                    call.request.path(),
-                    HttpStatusCode.OK.value,
-                    "Response all coupons successfully",
-                    LogUtils.getCurrentTimestamp()
-                )
+            Repository.logRequestCouponDao.insertLogRequestCoupon(
+                call.request.origin.remoteHost,
+                call.request.path(),
+                HttpStatusCode.OK.value,
+                "Response all coupons successfully"
             )
-            call.respondText(getAllCouponCoursesJson(), ContentType.Application.Json, status = HttpStatusCode.OK)
+            call.respondText(
+                Repository.getAllCouponCoursesJson(), ContentType.Application.Json, status = HttpStatusCode.OK
+            )
         }
         get("/fetch/{numberOfCourseRequest?}") {
             val numberOfCourseRequest = call.parameters["numberOfCourseRequest"]?.toIntOrNull()
             if (numberOfCourseRequest == null || numberOfCourseRequest <= 0) {
-                LogRequestCouponDao.insertLogRequestCoupon(
-                    LogRequestCoupon(
-                        0,
-                        call.request.origin.remoteHost,
-                        call.request.path(),
-                        HttpStatusCode.BadRequest.value,
-                        "Bad request with quantity $numberOfCourseRequest",
-                        LogUtils.getCurrentTimestamp()
-                    )
+                Repository.logRequestCouponDao.insertLogRequestCoupon(
+                    call.request.origin.remoteHost,
+                    call.request.path(),
+                    HttpStatusCode.BadRequest.value,
+                    "Bad request with quantity $numberOfCourseRequest",
                 )
                 return@get call.respondText("Bad request", status = HttpStatusCode.BadRequest)
             }
-            LogRequestCouponDao.insertLogRequestCoupon(
-                LogRequestCoupon(
-                    0,
-                    call.request.origin.remoteHost,
-                    call.request.path(),
-                    HttpStatusCode.OK.value,
-                    "Responded $numberOfCourseRequest coupons successfully",
-                    LogUtils.getCurrentTimestamp()
-                )
+            Repository.logRequestCouponDao.insertLogRequestCoupon(
+                call.request.origin.remoteHost,
+                call.request.path(),
+                HttpStatusCode.OK.value,
+                "Responded $numberOfCourseRequest coupons successfully",
             )
             call.respondText(
-                getNCouponCoursesJson(numberOfCourseRequest), ContentType.Application.Json, status = HttpStatusCode.OK
+                Repository.getNCouponCoursesJson(numberOfCourseRequest),
+                ContentType.Application.Json,
+                status = HttpStatusCode.OK
             )
         }
         get("/search/{query?}") {
             val searchQuery = call.parameters["query"]
             if (searchQuery.isNullOrEmpty()) {
-                LogRequestCouponDao.insertLogRequestCoupon(
-                    LogRequestCoupon(
-                        0,
-                        call.request.origin.remoteHost,
-                        call.request.path(),
-                        HttpStatusCode.BadRequest.value,
-                        "Bad request with query $searchQuery",
-                        LogUtils.getCurrentTimestamp()
-                    )
+                Repository.logRequestCouponDao.insertLogRequestCoupon(
+                    call.request.origin.remoteHost,
+                    call.request.path(),
+                    HttpStatusCode.BadRequest.value,
+                    "Bad request with query $searchQuery"
                 )
                 return@get call.respondText("Bad request", status = HttpStatusCode.BadRequest)
             }
-            LogRequestCouponDao.insertLogRequestCoupon(
-                LogRequestCoupon(
-                    0,
-                    call.request.origin.remoteHost,
-                    call.request.path(),
-                    HttpStatusCode.OK.value,
-                    "Responded coupons have $searchQuery successfully",
-                    LogUtils.getCurrentTimestamp()
-                )
+            Repository.logRequestCouponDao.insertLogRequestCoupon(
+                call.request.origin.remoteHost,
+                call.request.path(),
+                HttpStatusCode.OK.value,
+                "Responded coupons have $searchQuery successfully"
             )
             call.respondText(
-                queryCouponCoursesJson(searchQuery), ContentType.Application.Json, status = HttpStatusCode.OK
+                Repository.queryCouponCoursesJson(searchQuery), ContentType.Application.Json, status = HttpStatusCode.OK
             )
         }
         route("{...}") {

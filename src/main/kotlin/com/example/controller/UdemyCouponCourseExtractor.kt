@@ -3,8 +3,7 @@ package com.example.controller
 import com.example.data.model.CouponCourseData
 import com.example.data.model.CouponJsonData
 import com.example.data.model.CourseJsonData
-import com.example.controller.helper.RequestHtmlHelper
-import com.example.controller.helper.RemoteJsonHelper
+import com.example.controller.fetcher.WebContentFetcher
 import com.example.utils.UrlUtils
 import org.json.JSONObject
 
@@ -14,22 +13,17 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
     private var couponCode: String = ""
 
     init {
-//        println(couponUrl)
         courseId = extractCourseId()
         couponCode = extractCouponCode()
     }
 
     private fun extractCourseId(): Int {
-        val document = RequestHtmlHelper.getHtmlDocument(couponUrl)
+        val document = WebContentFetcher.getHtmlDocumentFrom(couponUrl)
         return try {
             document.body().attr("data-clp-course-id").toInt()
         }catch (e: Exception){
             val udemyId = document.getElementById("udemy")
-            if (udemyId != null) {
-                udemyId.attr("data-clp-course-id").toInt()
-            } else {
-                throw java.lang.Exception("CAN NOT FIND ELEMENT COURSE ID FROM WEB")
-            }
+            udemyId?.attr("data-clp-course-id")?.toInt() ?: throw java.lang.Exception("CAN NOT FIND ELEMENT COURSE ID FROM WEB")
         }
     }
 
@@ -40,14 +34,14 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
     fun getFullCouponCodeData(): CouponCourseData? {
 
         val couponDataResult = extractDataCouponFromOfficialAPI(
-            RemoteJsonHelper.getJsonObjectFrom(
+            WebContentFetcher.getJsonObjectFrom(
                 UrlUtils.getCouponAPI(
                     courseId, couponCode
                 )
             )
         )
         val courseDataResult =
-            extractCourseDataFromOfficialAPI(RemoteJsonHelper.getJsonObjectFrom(UrlUtils.getCourseAPI(courseId)))
+            extractCourseDataFromOfficialAPI(WebContentFetcher.getJsonObjectFrom(UrlUtils.getCourseAPI(courseId)))
         return combineCourseAndCouponData(couponDataResult, courseDataResult)
     }
 
