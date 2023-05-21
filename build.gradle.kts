@@ -33,4 +33,5 @@ dependencies {
     implementation("org.json:json:20220320")
     implementation("org.jsoup:jsoup:1.15.4")
     implementation("mysql:mysql-connector-java:8.0.28")
+    implementation("io.ktor:ktor-server-cors:$ktor_version")
 }
